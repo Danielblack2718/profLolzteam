@@ -11,15 +11,29 @@ use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::all();
+        $query = Post::query();
+
+        if ($request->has('q')) {
+            $searchTerm = $request->input('q');
+            $query->where('title', 'like', '%' . $searchTerm . '%')
+                ->orWhere('content', 'like', '%' . $searchTerm . '%');
+        }
+
+        $posts = $query->paginate(10); // Здесь 10 - количество записей на странице, можно изменить по вашему усмотрению
+
         return PostResource::collection($posts);
     }
 
     public function store(StorePostRequest $request)
     {
         $post = Post::create($request->validated());
+        return new PostResource($post);
+    }
+
+    public function show(Post $post)
+    {
         return new PostResource($post);
     }
 
@@ -32,6 +46,6 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
-        return response(null, 204);
+        return response()->noContent();
     }
 }

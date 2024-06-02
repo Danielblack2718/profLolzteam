@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\CommentController;
 
-Route::apiResource('posts', PostController::class)->except([
-    'create', 'show', 'edit'
+Route::apiResources([
+    'posts' => PostController::class
 ]);
 
-Route::apiResource('comments', CommentController::class)->except([
-    'create', 'show', 'edit'
+
+Route::apiResources([
+    'comments' => CommentController::class
 ]);
